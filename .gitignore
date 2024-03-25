@@ -1,23 +1,6 @@
-# Ignore node_modules directory
-node_modules/
-
-# Ignore .env file
-.env
-
-# Ignore pnpm lockfile
-pnpm-lock.yaml
-
-# Ignore logs directory
-logs/
-
-# Ignore build artifacts
-dist/
-build/
-
-# Ignore editor-specific files
 .vscode/
-.idea/
-
-# Ignore OS-specific files
-.DS_Store
-Thumbs.db
+node_modules/
+pnpm-lock.yaml
+build/
+*.env
+*.bin
