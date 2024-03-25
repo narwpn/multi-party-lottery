@@ -19,17 +19,17 @@ const lotteryContract = new web3.eth.Contract(
 const t1 = 60;
 const t2 = 60;
 const t3 = 60;
-const n = 4;
+const n = 5;
 const betAmount = web3.utils.toWei("0.001", "ether");
 
 lotteryContract.methods
   .updateParams(t1, t2, t3, n, betAmount)
   .estimateGas({ from: account.address })
-  .then((gas) => {
-    return lotteryContract.methods
+  .then((gas) =>
+    lotteryContract.methods
       .updateParams(t1, t2, t3, n, betAmount)
-      .send({ from: account.address, gas: gas });
-  })
-  .then((receipt) => {
-    console.log(receipt);
-  });
+      .send({ from: account.address, gas: gas })
+      .then((receipt) => {
+        console.log(receipt);
+      })
+  );

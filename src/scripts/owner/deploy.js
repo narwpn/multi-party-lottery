@@ -28,7 +28,7 @@ async function deploy() {
 
   const contractDeployer = myContract.deploy({
     data: "0x" + bytecode,
-    arguments: [120, 120, 120, 5, web3.utils.toWei("0.001", "ether")],
+    arguments: [60, 60, 60, 5, web3.utils.toWei("0.001", "ether")],
   });
 
   const gas = await contractDeployer.estimateGas({
