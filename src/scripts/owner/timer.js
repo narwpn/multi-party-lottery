@@ -10,7 +10,7 @@ const account = web3.eth.accounts.privateKeyToAccount(
 web3.eth.accounts.wallet.add(account);
 
 const lotteryContractAddress = process.env.LOTTERY_CONTRACT_ADDRESS;
-const lotteryContractABI = require("../../contracts/LotteryAbi.json");
+const lotteryContractABI = require("../../../build/LotteryAbi.json");
 const lotteryContract = new web3.eth.Contract(
   lotteryContractABI,
   lotteryContractAddress
