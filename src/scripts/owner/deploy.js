@@ -10,11 +10,11 @@ const web3 = new Web3("https://rpc.sepolia.org");
 
 const bytecodePath = path.join(
   __dirname,
-  "../../contracts/LotteryBytecode.bin"
+  "../../../build/LotteryBytecode.bin"
 );
 const bytecode = fs.readFileSync(bytecodePath, "utf8");
 
-const abi = require("../../contracts/LotteryAbi.json");
+const abi = require("../../../build/LotteryAbi.json");
 const myContract = new web3.eth.Contract(abi);
 myContract.handleRevert = true;
 
