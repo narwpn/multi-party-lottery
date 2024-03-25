@@ -113,7 +113,7 @@ contract Lottery {
 
     event PlayerRevealed(address addr, uint num);
 
-    function reveal(uint _num, bytes32 _salt) public {
+    function reveal(uint _num, string memory _salt) public {
         require(currentStage == 2, "Invalid stage");
         require(isPlayer[msg.sender], "Player has not commited");
         require(
