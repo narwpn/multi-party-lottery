@@ -3,14 +3,17 @@ const fs = require("fs");
 
 const web3 = new Web3("https://rpc.sepolia.org");
 
-const accounts = [];
-
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 7; i++) {
   let account = web3.eth.accounts.create();
-  accounts.push(account);
+  if (i === 0) {
+    fs.writeFileSync(
+      ".accounts.env",
+      `OWNER_ADDRESS="${account.address}"\nOWNER_PRIVATE_KEY="${account.privateKey}"\n`
+    );
+  } else {
+    fs.appendFileSync(
+      ".accounts.env",
+      `\nPLAYER${i}_ADDRESS="${account.address}"\nPLAYER${i}_PRIVATE_KEY="${account.privateKey}"\n`
+    );
+  }
 }
-
-fs.writeFileSync(
-  "accounts.json",
-  JSON.stringify(accounts, ["address", "privateKey"], 2)
-);
