@@ -39,7 +39,7 @@ async function main() {
       contract.changeAccount(playersPrivateKey[i]);
       const playerNum = i + 1;
       await contract.commit(nums[i], `salt${playerNum}`);
-      console.log(`Player ${playerNum} committed`);
+      console.log(`Player ${playerNum} committed:`);
       console.log(`  Number: ${nums[i]}`);
       console.log(`  Salt: salt${playerNum}`);
     }
@@ -50,7 +50,7 @@ async function main() {
       contract.changeAccount(playersPrivateKey[i]);
       const playerNum = i + 1;
       await contract.reveal(nums[i], `salt${playerNum}`);
-      console.log(`Player ${playerNum} revealed`);
+      console.log(`Player ${playerNum} revealed:`);
       console.log(`  Number: ${nums[i]}`);
       console.log(`  Salt: salt${playerNum}`);
     }
