@@ -28,28 +28,29 @@ async function main() {
   t3 = await contract.getT3();
   console.log("t3: ", t3);
 
+  console.log("Current stage: ", await contract.getCurrentStage());
+
   console.log("Listening for events...");
 
-  subscriptionT1Changed = contract.subscribeT1Changed((_t1) => {
+  contract.subscribeT1Changed((_t1) => {
     t1 = _t1;
     console.log("t1 changed: ", _t1);
   });
-  subscriptionT2Changed = contract.subscribeT2Changed((_t2) => {
+  contract.subscribeT2Changed((_t2) => {
     t2 = _t2;
     console.log("t2 changed: ", _t2);
   });
-  subscriptionT3Changed = contract.subscribeT3Changed((_t3) => {
+  contract.subscribeT3Changed((_t3) => {
     t3 = _t3;
     console.log("t3 changed: ", _t3);
   });
-
-  subscriptionOwnerTriggeredWinnerDetermination =
-    contract.subscribeOwnerTriggeredWinnerDetermination(() => {
-      clearTimeout(currentTimeout);
-      console.log("Owner triggered winner determination, canceling t3 timeout");
-    });
-
-  subscriptionStageChanged = contract.subscribeStageChanged((stage) => {
+  contract.subscribeNChanged((n) => {
+    console.log("n changed: ", n);
+  });
+  contract.subscribeBetAmountChanged((betAmount) => {
+    console.log("betAmount changed: ", betAmount);
+  });
+  contract.subscribeStageChanged((stage) => {
     console.log("Stage changed: ", stage);
     switch (stage) {
       case 0n:
@@ -84,6 +85,33 @@ async function main() {
       default:
         console.error("Unknown stage: ", stage);
     }
+  });
+  contract.subscribePlayerCommitted((addr, commit) => {
+    console.log("Player committed:");
+    console.log("  Address: ", addr);
+    console.log("  Commit: ", commit);
+  });
+  contract.subscribePlayerRevealed((addr, commit, num, salt) => {
+    console.log("Player revealed:");
+    console.log("  Address: ", addr);
+    console.log("  Commit: ", commit);
+    console.log("  Number: ", num);
+    console.log("  Salt: ", salt);
+  });
+  contract.subscribeOwnerTriggeredWinnerDetermination(() => {
+    clearTimeout(currentTimeout);
+    console.log("Owner triggered winner determination, canceling t3 timeout");
+  });
+  contract.subscribeWinner((addr, num) => {
+    console.log("Winner:");
+    console.log("  Address: ", addr);
+    console.log("  Number: ", num);
+  });
+  contract.subscribeNoEligiblePlayers(() => {
+    console.log("No eligible players");
+  });
+  contract.subscribeNoWinnerDetermination(() => {
+    console.log("No winner determination");
   });
 }
 
