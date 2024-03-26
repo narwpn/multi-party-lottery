@@ -1,17 +1,12 @@
-// For simplicity we use `web3` package here. However, if you are concerned with the size,
-//	you may import individual packages like 'web3-eth', 'web3-eth-contract' and 'web3-providers-http'.
 const Web3 = require("web3").Web3;
 const fs = require("fs");
 const path = require("path");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const web3 = new Web3("https://rpc.sepolia.org");
+const web3 = new Web3("https://sepolia.drpc.org");
 
-const bytecodePath = path.join(
-  __dirname,
-  "../../../build/LotteryBytecode.bin"
-);
+const bytecodePath = path.join(__dirname, "../../../build/LotteryBytecode.bin");
 const bytecode = fs.readFileSync(bytecodePath, "utf8");
 
 const abi = require("../../../build/LotteryAbi.json");
@@ -28,7 +23,7 @@ async function deploy() {
 
   const contractDeployer = myContract.deploy({
     data: "0x" + bytecode,
-    arguments: [60, 60, 60, 5, web3.utils.toWei("0.001", "ether")],
+    arguments: [60, 60, 60, 4, web3.utils.toWei("0.000001", "ether")],
   });
 
   const gas = await contractDeployer.estimateGas({
@@ -42,9 +37,6 @@ async function deploy() {
       gas: gas,
     });
     console.log("Contract deployed at address: " + tx.options.address);
-
-    const deployedAddressPath = path.join(__dirname, "MyContractAddress.bin");
-    fs.writeFileSync(deployedAddressPath, tx.options.address);
   } catch (error) {
     console.error(error);
   }
