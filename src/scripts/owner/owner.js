@@ -54,7 +54,7 @@ async function main() {
     console.log("Stage changed: ", stage);
     switch (stage) {
       case 0n:
-        console.lot("Stage 0: Waiting for the first player to commit");
+        console.log("Stage 0: Waiting for the first player to commit");
         break;
       case 1n:
         currentTimeout = setTimeout(() => {
