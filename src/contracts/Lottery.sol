@@ -10,8 +10,8 @@ contract Lottery {
         _;
     }
 
-    function changeOwner(address _newOwner) public onlyOwner {
-        owner = _newOwner;
+    function changeOwner(address newOwner) public onlyOwner {
+        owner = newOwner;
     }
 
     uint public t1; // commit stage duration
@@ -118,9 +118,9 @@ contract Lottery {
         }
     }
 
-    event PlayerRevealed(address addr, uint num);
+    event PlayerRevealed(address addr, bytes32 commit, uint num, string salt);
 
-    function reveal(uint _num, string memory _salt) public {
+    function reveal(uint num, string memory salt) public {
         require(currentStage == 2, "Invalid stage");
         require(isPlayer[msg.sender], "Player has not commited");
         require(
@@ -128,13 +128,18 @@ contract Lottery {
             "Player already revealed"
         );
         require(
-            keccak256(abi.encodePacked(_num, _salt)) ==
+            keccak256(abi.encodePacked(num, salt)) ==
                 players[playerIndex[msg.sender]].commit,
             "Invalid reveal"
         );
         players[playerIndex[msg.sender]].revealed = true;
-        players[playerIndex[msg.sender]].num = _num;
-        emit PlayerRevealed(msg.sender, _num);
+        players[playerIndex[msg.sender]].num = num;
+        emit PlayerRevealed(
+            msg.sender,
+            players[playerIndex[msg.sender]].commit,
+            num,
+            salt
+        );
     }
 
     event OwnerTriggeredWinnerDetermination();
