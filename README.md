@@ -32,21 +32,25 @@ This project implements a multi-party lottery using Ethereum smart contracts. Pa
 ### Usage
 
 1. Create .env file in the top level project directory:
-    ```shell
-    cp .env.example .env
-    ```
+
+   ```shell
+   cp .env.example .env
+   ```
 
 2. Create test accounts:
-    ```shell
-    ./utils/createAccounts.js
-    ```
-    A file named `.accounts.env` will be created in the top level project directory. Copy its content into accounts section of the `.env` file.
+
+   ```shell
+   ./utils/createAccounts.js
+   ```
+
+   A file named `.accounts.env` will be created in the top level project directory. Copy its content into accounts section of the `.env` file.
 
 3. Compile and deploy the smart contracts to Ethereum Sepolia test network:
 
    ```shell
    ./utils/compileAndDeploy.ps1
    ```
+
    IMPORTANT: Take note of the deployed contract address in the command output. Copy it to the `LOTTERY_CONTRACT_ADDRESS` key in the `.env` file.
 
 4. Run the owner script:
