@@ -1,7 +1,9 @@
 const { Web3 } = require("web3");
 const fs = require("fs");
 
-const web3 = new Web3("https://rpc.sepolia.org");
+const HTTPS_RPC_ENDPOINT = process.env.HTTPS_RPC_ENDPOINT;
+
+const web3 = new Web3(HTTPS_RPC_ENDPOINT);
 
 for (let i = 0; i < 7; i++) {
   let account = web3.eth.accounts.create();
