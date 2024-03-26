@@ -69,7 +69,6 @@ async function main() {
     }
   });
   contract.subscribeOwnerTriggeredWinnerDetermination(() => {
-    clearTimeout(currentTimeout);
     console.log("Owner triggered winner determination");
   });
   contract.subscribeWinner((addr, num) => {
