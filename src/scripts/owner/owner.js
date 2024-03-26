@@ -28,6 +28,8 @@ async function main() {
   t3 = await contract.getT3();
   console.log("t3: ", t3);
 
+  console.log("Listening for events...");
+
   subscriptionT1Changed = contract.subscribeT1Changed((_t1) => {
     t1 = _t1;
     console.log("t1 changed: ", _t1);
@@ -40,13 +42,14 @@ async function main() {
     t3 = _t3;
     console.log("t3 changed: ", _t3);
   });
+
   subscriptionOwnerTriggeredWinnerDetermination =
     contract.subscribeOwnerTriggeredWinnerDetermination(() => {
       console.log("Owner triggered winner determination, canceling t3 timeout");
       clearTimeout(currentTimeout);
     });
 
-  contract.subscribeStageChanged((stage) => {
+  subscriptionStageChanged = contract.subscribeStageChanged((stage) => {
     console.log("Stage changed: ", stage);
     switch (stage) {
       case 0n:
