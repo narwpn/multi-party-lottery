@@ -40,6 +40,8 @@ async function main() {
       const playerNum = i + 1;
       await contract.commit(nums[i], `salt${playerNum}`);
       console.log(`Player ${playerNum} committed`);
+      console.log(`  Number: ${nums[i]}`);
+      console.log(`  Salt: salt${playerNum}`);
     }
   }
 
@@ -49,17 +51,37 @@ async function main() {
       const playerNum = i + 1;
       await contract.reveal(nums[i], `salt${playerNum}`);
       console.log(`Player ${playerNum} revealed`);
+      console.log(`  Number: ${nums[i]}`);
+      console.log(`  Salt: salt${playerNum}`);
     }
   }
 
+  console.log("Committing for all players");
   await commit();
-  console.log("All players committed, waiting for stage 2");
+  console.log("All players committed, waiting for stage 2...");
 
-  contract.subscribeStageChanged((stage) => {
+  contract.subscribeStageChanged(async (stage) => {
     console.log(`Stage changed to ${stage}`);
     if (stage === 2n) {
-      reveal();
+      console.log("Revealing for all players");
+      await reveal();
+      console.log("All players revealed, waiting for stage 3...");
     }
+  });
+  contract.subscribeOwnerTriggeredWinnerDetermination(() => {
+    clearTimeout(currentTimeout);
+    console.log("Owner triggered winner determination");
+  });
+  contract.subscribeWinner((addr, num) => {
+    console.log("Winner:");
+    console.log("  Address: ", addr);
+    console.log("  Number: ", num);
+  });
+  contract.subscribeNoEligiblePlayers(() => {
+    console.log("No eligible players");
+  });
+  contract.subscribeNoWinnerDetermination(() => {
+    console.log("No winner determination");
   });
 }
 
