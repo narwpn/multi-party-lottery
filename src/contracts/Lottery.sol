@@ -20,25 +20,20 @@ contract Lottery {
     uint public n; // player limit
     uint public betAmount; // in wei
 
+    constructor(uint _t1, uint _t2, uint _t3, uint _n, uint _betAmount) {
+        owner = msg.sender;
+        t1 = _t1;
+        t2 = _t2;
+        t3 = _t3;
+        n = _n;
+        betAmount = _betAmount;
+    }
+
     event T1Changed(uint t1);
     event T2Changed(uint t2);
     event T3Changed(uint t3);
     event NChanged(uint n);
     event BetAmountChanged(uint betAmount);
-
-    constructor(uint _t1, uint _t2, uint _t3, uint _n, uint _betAmount) {
-        owner = msg.sender;
-        t1 = _t1;
-        emit T1Changed(t1);
-        t2 = _t2;
-        emit T2Changed(t2);
-        t3 = _t3;
-        emit T3Changed(t3);
-        n = _n;
-        emit NChanged(n);
-        betAmount = _betAmount;
-        emit BetAmountChanged(betAmount);
-    }
 
     function updateParams(
         uint _t1,
@@ -47,6 +42,7 @@ contract Lottery {
         uint _n,
         uint _betAmount
     ) public onlyOwner {
+        require(currentStage == 0, "Invalid stage");
         if (_t1 != t1) {
             t1 = _t1;
             emit T1Changed(t1);
@@ -72,8 +68,9 @@ contract Lottery {
     uint public currentStage = 0;
     event StageChanged(uint stage);
 
-    function endStage(uint stage) public onlyOwner {
-        require(stage == currentStage, "Invalid stage");
+    function nextStage() public onlyOwner {
+        // for stage 4, owner must call manualReset
+        require(currentStage < 4, "Invalid stage");
         currentStage = (currentStage + 1) % 5;
         emit StageChanged(currentStage);
         if (currentStage == 4) {
@@ -99,7 +96,7 @@ contract Lottery {
     function commit(bytes32 _commit) public payable {
         require(currentStage == 0 || currentStage == 1, "Invalid stage");
         require(!isPlayer[msg.sender], "Player already commited");
-        require(players.length < n, "Reached maximum number of players");
+        require(players.length < n, "Maximum number of players reached");
         require(msg.value == betAmount, "Invalid value");
         isPlayer[msg.sender] = true;
         playerIndex[msg.sender] = players.length;
@@ -132,7 +129,8 @@ contract Lottery {
 
     event OwnerTriggeredWinnerDetermination();
     event Winner(address addr, uint num);
-    event NoWinner();
+    event NoEligiblePlayers();
+    event NoWinnerDetermination();
 
     function determineWinner() public onlyOwner {
         require(currentStage == 3, "Invalid stage");
@@ -156,10 +154,9 @@ contract Lottery {
         }
 
         if (eligiblePlayersIndex.length == 0) {
-            emit NoWinner();
+            emit NoEligiblePlayers();
             payable(owner).transfer(betAmount * players.length); // 100% to owner
-            currentStage = 0;
-            emit StageChanged(currentStage);
+            reset();
             return;
         }
 
@@ -185,18 +182,14 @@ contract Lottery {
             (betAmount * players.length * 98) / 100 // 98% to winner
         );
         payable(owner).transfer((betAmount * players.length * 2) / 100); // 2% to owner
+        reset();
     }
 
-    function handleWinnerDeterminationTimeout() private {
-        require(currentStage == 4, "Invalid stage");
-        emit NoWinner();
-        for (uint i = 0; i < players.length; i++) {
-            withdrawableAmount[players[i].addr] += betAmount;
-        }
-    }
-
-    function manualRestart() public onlyOwner {
-        require(currentStage == 4, "Invalid stage");
+    function reset() private {
+        require(
+            currentStage == 4 || ownerTriggeredWinnerDetermination,
+            "Invalid stage"
+        );
         for (uint i = 0; i < players.length; i++) {
             isPlayer[players[i].addr] = false;
             playerIndex[players[i].addr] = 0;
@@ -207,6 +200,19 @@ contract Lottery {
 
         currentStage = 0;
         emit StageChanged(currentStage);
+    }
+
+    function handleWinnerDeterminationTimeout() private {
+        require(currentStage == 4, "Invalid stage");
+        emit NoWinnerDetermination();
+        for (uint i = 0; i < players.length; i++) {
+            withdrawableAmount[players[i].addr] += betAmount;
+        }
+    }
+
+    function manualReset() public onlyOwner {
+        require(currentStage == 4, "Invalid stage");
+        reset();
     }
 
     mapping(address => uint) public withdrawableAmount; // in wei
