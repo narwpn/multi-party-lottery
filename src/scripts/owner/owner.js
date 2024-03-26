@@ -45,8 +45,8 @@ async function main() {
 
   subscriptionOwnerTriggeredWinnerDetermination =
     contract.subscribeOwnerTriggeredWinnerDetermination(() => {
-      console.log("Owner triggered winner determination, canceling t3 timeout");
       clearTimeout(currentTimeout);
+      console.log("Owner triggered winner determination, canceling t3 timeout");
     });
 
   subscriptionStageChanged = contract.subscribeStageChanged((stage) => {
@@ -56,22 +56,25 @@ async function main() {
         console.lot("Stage 0: Waiting for the first player to commit");
         break;
       case 1n:
-        console.log("Stage 1: Waiting for other players to commit");
         currentTimeout = setTimeout(() => {
           contract.nextStage();
+          console.log("Stage 1: Timeout, moving to stage 2");
         }, Number(t1) * 1000);
+        console.log("Stage 1: Waiting for other players to commit");
         break;
       case 2n:
-        console.log("Stage 2: Waiting for players to reveal");
         currentTimeout = setTimeout(() => {
           contract.nextStage();
+          console.log("Stage 2: Timeout, moving to stage 3");
         }, Number(t2) * 1000);
+        console.log("Stage 2: Waiting for players to reveal");
         break;
       case 3n:
-        console.log("Stage 3: Waiting for the owner to determine the winner");
         currentTimeout = setTimeout(() => {
           contract.nextStage();
+          console.log("Stage 3: Timeout, moving to stage 4");
         }, Number(t3) * 1000);
+        console.log("Stage 3: Waiting for the owner to determine the winner");
         break;
       case 4n:
         console.log("Stage 4: The owner did not determine the winner in time");
