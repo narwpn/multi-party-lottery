@@ -29,11 +29,16 @@ async function main() {
     PLAYER6_PRIVATE_KEY,
   ];
 
+  const nums = [];
+  for (let i = 0; i < playersPrivateKey.length; i++) {
+    nums.push(Math.floor(Math.random() * 1000));
+  }
+
   async function commit() {
     for (let i = 0; i < playersPrivateKey.length; i++) {
       contract.changeAccount(playersPrivateKey[i]);
       const playerNum = i + 1;
-      await contract.commit(playerNum, `salt${playerNum}`);
+      await contract.commit(nums[i], `salt${playerNum}`);
       console.log(`Player ${playerNum} committed`);
     }
   }
@@ -42,7 +47,7 @@ async function main() {
     for (let i = 0; i < playersPrivateKey.length; i++) {
       contract.changeAccount(playersPrivateKey[i]);
       const playerNum = i + 1;
-      await contract.reveal(playerNum, `salt${playerNum}`);
+      await contract.reveal(nums[i], `salt${playerNum}`);
       console.log(`Player ${playerNum} revealed`);
     }
   }
