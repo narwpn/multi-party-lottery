@@ -109,8 +109,9 @@ class LotteryContract {
     if (num < 0 || num > 999) {
       throw new Error("Invalid number");
     }
-    const hash = this.web3.utils.sha3(
-      this.web3.eth.abi.encodeParameters(["uint", "string"], [num, salt])
+    const hash = this.web3.utils.soliditySha3(
+      { t: "uint256", v: num },
+      { t: "string", v: salt }
     );
     return this.contract.methods.commit(hash).send({
       from: this.account.address,
