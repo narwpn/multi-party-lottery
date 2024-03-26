@@ -48,10 +48,11 @@ async function main() {
   }
 
   await commit();
+  console.log("All players committed, waiting for stage 2");
 
   contract.subscribeStageChanged((stage) => {
     console.log(`Stage changed to ${stage}`);
-    if (stage === 2) {
+    if (stage === 2n) {
       reveal();
     }
   });
