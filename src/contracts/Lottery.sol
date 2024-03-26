@@ -90,6 +90,16 @@ contract Lottery {
     Player[] public players;
     uint[] public eligiblePlayersIndex;
     bool public ownerTriggeredWinnerDetermination = false;
+    bool public thereIsWinner = false;
+    address public winner;
+
+    function listPlayers() public view returns (Player[] memory) {
+        return players;
+    }
+
+    function listEligiblePlayersIndex() public view returns (uint[] memory) {
+        return eligiblePlayersIndex;
+    }
 
     event PlayerCommitted(address addr, bytes32 commit);
 
@@ -177,6 +187,8 @@ contract Lottery {
         ) % eligiblePlayersIndex.length;
 
         uint winnerIndex = eligiblePlayersIndex[eligiblePlayersWinnerIndex];
+        thereIsWinner = true;
+        winner = players[winnerIndex].addr;
         emit Winner(players[winnerIndex].addr, players[winnerIndex].num);
         payable(players[winnerIndex].addr).transfer(
             (betAmount * players.length * 98) / 100 // 98% to winner
@@ -197,6 +209,8 @@ contract Lottery {
         delete players;
         delete eligiblePlayersIndex;
         delete ownerTriggeredWinnerDetermination;
+        delete thereIsWinner;
+        delete winner;
 
         currentStage = 0;
         emit StageChanged(currentStage);
