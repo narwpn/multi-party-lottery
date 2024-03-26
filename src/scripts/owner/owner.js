@@ -76,6 +76,7 @@ async function main() {
           console.log("Stage 3: Timeout, moving to stage 4");
         }, Number(t3) * 1000);
         console.log("Stage 3: Waiting for the owner to determine the winner");
+        contract.determineWinner();
         break;
       case 4n:
         console.log("Stage 4: The owner did not determine the winner in time");
