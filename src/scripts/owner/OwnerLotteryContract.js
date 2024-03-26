@@ -1,8 +1,8 @@
 const LotteryContract = require("../LotteryContract");
 
 class OwnerLotteryContract extends LotteryContract {
-  constructor(wssRpcEndpoint, contractAddress, contractAbi, ownerPrivateKey) {
-    super(wssRpcEndpoint, contractAddress, contractAbi);
+  constructor(rpcEndpoint, contractAddress, contractAbi, ownerPrivateKey) {
+    super(rpcEndpoint, contractAddress, contractAbi);
 
     this.account = this.web3.eth.accounts.privateKeyToAccount(ownerPrivateKey);
     this.web3.eth.accounts.wallet.add(this.account);

@@ -1,8 +1,8 @@
 const { Web3 } = require("web3");
 
 class LotteryContract {
-  constructor(wssRpcEndpoint, contractAddress, contractAbi) {
-    this.web3 = new Web3(wssRpcEndpoint);
+  constructor(rpcEndpoint, contractAddress, contractAbi) {
+    this.web3 = new Web3(rpcEndpoint);
 
     this.contract = new this.web3.eth.Contract(contractAbi, contractAddress);
     this.contract.handleRevert = true;
@@ -95,6 +95,8 @@ class LotteryContract {
   withdraw() {
     return this.contract.methods.withdraw().send();
   }
+
+  // event subscriptions require a wss endpoint
 
   subscribeT1Changed(callback) {
     return this.contract.events.T1Changed().on("data", (event) => {

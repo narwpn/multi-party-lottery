@@ -7,12 +7,6 @@ const OWNER_PRIVATE_KEY = process.env.OWNER_PRIVATE_KEY;
 
 const abi = require("../../../build/LotteryAbi.json");
 
-let t1;
-let t2;
-let t3;
-
-let currentTimeout;
-
 async function main() {
   const contract = new OwnerLotteryContract(
     WSS_RPC_ENDPOINT,
@@ -20,6 +14,12 @@ async function main() {
     abi,
     OWNER_PRIVATE_KEY
   );
+
+  let t1;
+  let t2;
+  let t3;
+
+  let currentTimeout;
 
   t1 = await contract.getT1();
   console.log("t1: ", t1);
