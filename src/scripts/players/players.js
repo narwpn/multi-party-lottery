@@ -46,7 +46,7 @@ async function main() {
   }
 
   async function reveal() {
-    for (let i = 0; i < playersPrivateKey.length; i++) {
+    for (let i = 0; i < playersPrivateKey.length-2; i++) {
       contract.changeAccount(playersPrivateKey[i]);
       const playerNum = i + 1;
       await contract.reveal(nums[i], `salt${playerNum}`);

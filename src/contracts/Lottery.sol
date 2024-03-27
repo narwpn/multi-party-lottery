@@ -195,10 +195,21 @@ contract Lottery {
         thereIsWinner = true;
         winner = players[winnerIndex].addr;
         emit Winner(players[winnerIndex].addr, players[winnerIndex].num);
+        uint pool = betAmount * players.length;
+        uint refund = (betAmount * 98) / 100; // 98% refund for each player that did not reveal
+        uint extraForOwner = betAmount - refund; // 2% difference goes to the owner
+        uint totalExtraForOwner = 0; // total extra for the owner
+        for (i = 0; i < players.length; i++) {
+            if (!players[i].revealed) {
+                pool -= betAmount;
+                totalExtraForOwner += extraForOwner;
+                payable(players[i].addr).transfer(refund);
+            }
+        }
         payable(players[winnerIndex].addr).transfer(
-            (betAmount * players.length * 98) / 100 // 98% to winner
+            (pool * 98) / 100 // 98% of the remaining pool to winner
         );
-        payable(owner).transfer((betAmount * players.length * 2) / 100); // 2% to owner
+        payable(owner).transfer((pool * 2) / 100 + totalExtraForOwner);
         reset();
     }
 
